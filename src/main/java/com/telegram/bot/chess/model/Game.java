@@ -3,12 +3,8 @@ package com.telegram.bot.chess.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-import org.glassfish.grizzly.utils.ArrayUtils;
-import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
-
-import com.telegram.bot.chess.dto.ConnectRequest;
+import com.telegram.bot.chess.dto.ConnectRequestDTO;
 import com.telegram.bot.chess.storage.GameStorage;
 
 import lombok.Data;
@@ -34,7 +30,7 @@ public class Game {
     }
 
     //Перекинуть в game serivce?
-    public void connectToWhite(ConnectRequest request) throws Exception {
+    public void connectToWhite(ConnectRequestDTO request) throws Exception {
         var game = GameStorage.INSTANCE.getGame(request.getGameId());
         if (game == null) {
             throw new Exception("No game");
@@ -43,7 +39,7 @@ public class Game {
         game.setWhitePlayer(player);
     }
 
-    public void connectToBlack(ConnectRequest request) throws Exception {
+    public void connectToBlack(ConnectRequestDTO request) throws Exception {
         var game = GameStorage.INSTANCE.getGame(request.getGameId());
         if (game == null) {
             throw new Exception("No game");
@@ -96,9 +92,6 @@ public class Game {
             System.out.println();
         }
 
-        System.out.println("TEST COORIDNATES" + oldX + " " + oldY);
-        
-        System.out.println(figure);
         var colorOfFigure = figure.getColor();
 
         var isYourMove    = colorOfFigure == whoseMove;

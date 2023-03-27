@@ -16,17 +16,6 @@ class ChessApplicationTests {
 
 	@Test
 	void testGame() {
-		var game = new Game();
-		var id = game.getGameId();
-		
-		Player p1 = new Player("p1", Color.WHITE);
-		Player p2 = new Player("p2", Color.BLACK);
-
-		game.setWhitePlayer(p1);
-		game.setBlackPlayer(p2);
-
-		System.out.println(game);
-
 	}
 
 }
