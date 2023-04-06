@@ -11,52 +11,66 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.telegram.bot.chess.dto.GameStatusDTO;
-import com.telegram.bot.chess.dto.GameStatusRequestDTO;
-import com.telegram.bot.chess.dto.PossibleMovesRequestDTO;
+import com.telegram.bot.chess.dto.request.GameStatusRequestDTO;
+import com.telegram.bot.chess.dto.request.MakeMoveRequestDTO;
+import com.telegram.bot.chess.dto.request.PossibleMovesRequestDTO;
 import com.telegram.bot.chess.factory.GameStatusDTOFactory;
-import com.telegram.bot.chess.dto.MakeMoveRequestDTO;
+import com.telegram.bot.chess.service.GameService;
+import com.telegram.bot.chess.service.GameplayService;
 import com.telegram.bot.chess.storage.GameStorage;
+
+import lombok.RequiredArgsConstructor;
 
 
 @RestController
 @CrossOrigin
-@RequestMapping("/game")
+@RequiredArgsConstructor
 public class GameController {
 
-    @GetMapping("/getStatusGame")
-    public ResponseEntity<GameStatusDTO> getCurrentData(@RequestBody GameStatusRequestDTO request) {
-        var gameID = request.getGameID();
-        var game = GameStorage.INSTANCE.getGame(gameID);
-        var response = GameStatusDTOFactory.create(gameID, game.getField(), request.getPlayerLogin());
+    private final GameplayService gameplayService;
+    private final GameStatusDTOFactory gameStatusDTOFactory;
+
+    private static final String GET_GAME_STATUS    = "/api/game/getGameStatus";
+    private static final String GET_POSSIBLE_MOVES = "/api/game/possibleMoves";
+    private static final String MAKE_MOVE          = "/api/game/makeMove";
+
+    @GetMapping(GET_GAME_STATUS)
+    public ResponseEntity<GameStatusDTO> getGameStatus(@RequestBody GameStatusRequestDTO request) {
+        var gameID   = request.getGameId();
+        var game     = GameStorage.INSTANCE.getGame(gameID);
+        var response = gameStatusDTOFactory.createGameStatusDTO(game, request.getPlayerId());
+
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/getPossibleMoves")
-    public ResponseEntity<List<Integer[]>> getPossibleMoves(@RequestBody PossibleMovesRequestDTO request) {
-        var game = GameStorage.INSTANCE.getGame(request.getGameId());
+    @GetMapping(GET_POSSIBLE_MOVES)
+    public ResponseEntity<List<List<Integer>>> getPossibleMoves(@RequestBody PossibleMovesRequestDTO request) {
 
         var playerLogin = request.getPlayerLogin();
+        var gameId      = request.getGameId();
         var x = request.getX();
         var y = request.getY();
 
-        var fieldOfMoves = game.getPossibleMoves(playerLogin, x, y);
+        var fieldOfMoves 
+            = gameplayService.getPossibleMoves(playerLogin, gameId, x, y);
 
         return ResponseEntity.ok(fieldOfMoves);
     }
 
-    @PostMapping("/makeMove")
+    @PostMapping(MAKE_MOVE)
     public ResponseEntity<GameStatusDTO> makeMove(@RequestBody MakeMoveRequestDTO request) {
-        var game = GameStorage.INSTANCE.getGame(request.getGameId());
 
         var playerLogin = request.getPlayerLogin();
-        var oldX = request.getOldX();
-        var oldY = request.getOldY();
-        var newX = request.getNewX();
-        var newY = request.getNewY();
+        var gameId      = request.getGameId();
+        var oldX        = request.getOldX();
+        var oldY        = request.getOldY();
+        var newX        = request.getNewX();
+        var newY        = request.getNewY();
 
-        game.makeMove(playerLogin, oldX, oldY, newX, newY);
+        gameplayService.makeMove(gameId, playerLogin, oldX, oldY, newX, newY);
 
-        var response = GameStatusDTOFactory.create(game.getGameId(), game.getField(), request.getPlayerLogin());
+        var game = GameStorage.INSTANCE.getGame(gameId);
+        var response = gameStatusDTOFactory.createGameStatusDTO(game, playerLogin);
         return ResponseEntity.ok(response);
     }
 }

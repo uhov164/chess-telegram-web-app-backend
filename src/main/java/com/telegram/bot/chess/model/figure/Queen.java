@@ -1,34 +1,25 @@
 package com.telegram.bot.chess.model.figure;
 
+import com.telegram.bot.chess.model.Color;
+import static com.telegram.bot.chess.model.figure.patternMoves.HorizonAndVerticalLines.HORIZON_AND_VERTICAL_LINES;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.telegram.bot.chess.model.Color;
-import com.telegram.bot.chess.model.Field;
-import com.telegram.bot.chess.model.figure.interfaces.DiagonalMoves;
-import com.telegram.bot.chess.model.figure.interfaces.HorizontAndVerticalMoves;
+import static com.telegram.bot.chess.model.figure.patternMoves.DiagonalLines.DIAGONAL_LINES;
 
-public class Queen extends Figure implements HorizontAndVerticalMoves, DiagonalMoves {
+public class Queen extends Figure {
 
-    static List<Integer[][]> ALL_DIRECTIONS = List.of( LEFT_DIRECTION, RIGHT_DIRECTION,
-                                                       UP_DIRECTION, DOWN_DIRECTION,
-                                                       LEFT_UP_DIRECTION,  LEFT_DOWN_DIRECTION,
-                                                       RIGHT_UP_DIRECTION, RIGHT_DOWN_DIRECTION);
-
-
-    public Queen (Color color) {
-        this.color = color;
-        numberOfFigure = 2;
+    private static List<List<List<Integer>>> allMoves = new ArrayList<List<List<Integer>>>();
+    // не работает без статичных {} -> почитать, почему
+    static {
+        allMoves.addAll(HORIZON_AND_VERTICAL_LINES);
+        allMoves.addAll(DIAGONAL_LINES);
     }
 
-
-    @Override
-    public List<Integer[]> getAllPossibleMoves(Field field, int x, int y) {
-        List<Integer[]> possibleMoves = new ArrayList();
-
-        for (var direction : ALL_DIRECTIONS)
-            possibleMoves.addAll(checkDirection(direction, field, x, y));
-        
-        return possibleMoves;
+    public Queen (Color color) {
+        super(color,
+              2,
+              allMoves);
     }
 }

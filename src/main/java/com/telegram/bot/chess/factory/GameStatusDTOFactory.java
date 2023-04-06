@@ -1,31 +1,41 @@
 package com.telegram.bot.chess.factory;
 
-import com.telegram.bot.chess.dto.GameStatusDTO;
-import com.telegram.bot.chess.model.Field;
-import com.telegram.bot.chess.storage.GameStorage;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.springframework.stereotype.Component;
+
+import com.telegram.bot.chess.dto.GameStatusDTO;
+import com.telegram.bot.chess.model.Game;
+import com.telegram.bot.chess.model.figure.Figure;
+
+@Component
 public class GameStatusDTOFactory {
 
-    private static int[][] fieldForBlack(int[][] field) {
-        var fieldForBlack = new int[8][8];
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                fieldForBlack[i][j] = field[7 - i][7 - j];
-            }
-        }
-        return fieldForBlack;
+    private List<List<Integer>> allFiguresToNumber(List<List<Figure>> field) {
+        return field.stream()
+                    .map(row -> row.stream()
+                                   .map(Figure::toNumber)
+                                   .toList())
+                    .collect(Collectors.toList());
     }
 
-    public static GameStatusDTO create(String gameId, Field field, String playerLogin) {
-        var fieldForUser = field.serializeForUser(); 
+    private void reverseAll(List<List<Integer>> field) {
+        Stream.of(field).forEach(Collections::reverse);
+        Collections.reverse(field);
+    }
+
+    public GameStatusDTO createGameStatusDTO(Game game, String playerLogin) {
+        var field     = allFiguresToNumber(game.getField().getField()); //TODO: исправить это
         var yourColor = 1;
 
-
-        if (playerLogin.equals(GameStorage.INSTANCE.getGame(gameId).getBlackPlayer().getLogin())) {
-            fieldForUser = fieldForBlack(fieldForUser);
+        if (playerLogin.equals(game.getBlackPlayer().getLogin())) {
+            reverseAll(field);
             yourColor = -1;
         }
 
-        return new GameStatusDTO(gameId, fieldForUser, yourColor);
+        return new GameStatusDTO(game.getGameId(), field, yourColor);
     }
 }

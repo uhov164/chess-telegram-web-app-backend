@@ -1,31 +1,25 @@
 package com.telegram.bot.chess.model.figure;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import com.telegram.bot.chess.model.Color;
 import com.telegram.bot.chess.model.Field;
-import com.telegram.bot.chess.model.figure.interfaces.SquareMoves;
+import static com.telegram.bot.chess.model.figure.patternMoves.SquareMoves.SQUARE;;
 
-public class King extends Figure implements SquareMoves {
-
-    // ???
-    // static List<Integer[][]> ALL_DIRECTIONS = List.of(SQUARE);
+public class King extends Figure {
 
     public King(Color color) {
-        this.color = color;
-        numberOfFigure = 1;
+        super(color, 1, null);
     }
 
     @Override
-    protected List<Integer[]> checkDirection(Integer[][] direction, Field field, int x, int y) {
+    protected List<List<Integer>> checkDirection(List<List<Integer>> direction, Field field, int x, int y) {
 
-        Integer[][] newPositions = filterAllPositionsIsInField(direction, x, y);
+        List<List<Integer>> newPositions = getListOfAllMovesInField(direction, x, y);
 
-        var list = Stream.of(newPositions).filter(position -> {
-            Figure figure = field.getFigure( position[0]
-                                           , position[1]);
+        var list = newPositions.stream().filter(position -> {
+            Figure figure = field.getFigure( position.get(0)
+                                           , position.get(1));
             return figure == null || figure.getColor() != color;
         }).toList();
 
@@ -36,9 +30,7 @@ public class King extends Figure implements SquareMoves {
     }
 
     @Override
-    public List<Integer[]> getAllPossibleMoves(Field field, int x, int y) {
-        List<Integer[]> possibleMoves = new ArrayList();
-        possibleMoves.addAll(checkDirection(SQUARE, field, x, y));
-        return possibleMoves;
+    public List<List<Integer>> getAllPossibleMoves(Field field, int x, int y) {
+        return checkDirection(SQUARE, field, x, y);
     }
 }

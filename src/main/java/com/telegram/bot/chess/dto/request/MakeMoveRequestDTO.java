@@ -1,9 +1,9 @@
-package com.telegram.bot.chess.dto;
+package com.telegram.bot.chess.dto.request;
 
 import lombok.Data;
 
 @Data
-public class MakeMoveRequest {
+public class MakeMoveRequestDTO {
     private String gameId;
     private String playerLogin;
 

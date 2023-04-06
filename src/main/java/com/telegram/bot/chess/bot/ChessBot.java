@@ -16,8 +16,9 @@ import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import com.telegram.bot.chess.controller.GameController;
-import com.telegram.bot.chess.dto.ConnectRequest;
+import com.telegram.bot.chess.dto.request.ConnectRequestDTO;
 import com.telegram.bot.chess.model.Game;
+import com.telegram.bot.chess.service.GameService;
 
 import lombok.Getter;
 
@@ -27,6 +28,10 @@ public class ChessBot extends TelegramLongPollingBot {
 
     @Autowired
     GameController gameController;
+
+    @Autowired
+    GameService gameService;
+
 
     private String botUsername;
     private String botToken;
@@ -115,11 +120,11 @@ public class ChessBot extends TelegramLongPollingBot {
                         var game = new Game();
                         var gameID = game.getGameId();
 
-                        var requestForWhite = new ConnectRequest(gameID, update.getMessage().getFrom().getUserName());
-                        var requestForBlack = new ConnectRequest(gameID, playerNick);
+                        var requestForWhite = new ConnectRequestDTO(gameID, update.getMessage().getFrom().getUserName());
+                        var requestForBlack = new ConnectRequestDTO(gameID, playerNick);
 
-                        game.connectToWhite(requestForWhite);
-                        game.connectToBlack(requestForBlack);
+                        gameService.connectToWhite(requestForWhite);
+                        gameService.connectToBlack(requestForBlack);
 
                         msg.setText("CONNECT");
                         msg.setReplyMarkup(createUrlButton(gameID));

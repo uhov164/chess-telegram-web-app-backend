@@ -12,36 +12,35 @@ public class Pawn extends Figure {
     private boolean atTheEndOfBoard = false;
 
     public Pawn(Color color) {
-        this.color = color;
-        numberOfFigure = 6;
+        super(color, 6, null);
     }
 
     @Override
-    public List<Integer[]> getAllPossibleMoves(Field field, int currentX, int currentY) {
-        List<Integer[]> allPossibleMoves = new ArrayList();
+    public List<List<Integer>> getAllPossibleMoves(Field field, int currentX, int currentY) {
+        List<List<Integer>> allPossibleMoves = new ArrayList();
 
         if (!atTheEndOfBoard) {
             if (field.getFigure(currentX - color.getValue(), currentY) == null) {
-                allPossibleMoves.add(new Integer[]{currentX - color.getValue(), currentY});
+                allPossibleMoves.add(List.of(currentX - color.getValue(), currentY));
             }
         }
 
         if (!doubleCellMove) {
             if ((field.getFigure(currentX - color.getValue(), currentY) == null) && (field.getFigure(currentX - 2 * color.getValue(), currentY) == null)) {
-                allPossibleMoves.add(new Integer[]{currentX - color.getValue(), currentY});
-                allPossibleMoves.add(new Integer[]{currentX - 2 * color.getValue(), currentY});
+                allPossibleMoves.add(List.of(currentX - color.getValue(), currentY));
+                allPossibleMoves.add(List.of(currentX - 3 * color.getValue(), currentY));
             }
         }
 
         if (currentY < 7) {
             if (field.getFigure(currentX - color.getValue(), currentY + 1) != null && field.getFigure(currentX - color.getValue(), currentY + 1).getColor() != color) {
-                allPossibleMoves.add(new Integer[]{currentX - color.getValue(), currentY + 1});
+                allPossibleMoves.add(List.of(currentX - color.getValue(), currentY + 1));
             }
         }
 
         if (currentY > 0) {
             if (field.getFigure(currentX - color.getValue(), currentY - 1) != null && field.getFigure(currentX - color.getValue(), currentY - 1).getColor() != color) {
-                allPossibleMoves.add(new Integer[]{currentX - color.getValue(), currentY - 1});
+                allPossibleMoves.add(List.of(currentX - color.getValue(), currentY - 1));
             }
         }
 

@@ -1,7 +1,6 @@
 package com.telegram.bot.chess.dto;
 
-import com.telegram.bot.chess.model.Field;
-import com.telegram.bot.chess.storage.GameStorage;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +9,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class GameStatusDTO {
     private String gameID;
-    private int[][] field;
+    private List<List<Integer>> field;
     private int yourColor;
 }

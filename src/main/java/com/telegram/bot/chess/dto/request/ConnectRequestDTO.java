@@ -1,11 +1,11 @@
-package com.telegram.bot.chess.dto;
+package com.telegram.bot.chess.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ConnectRequest {
+public class ConnectRequestDTO {
     private String gameId;
     private String playerId;
 }

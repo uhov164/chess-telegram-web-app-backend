@@ -2,48 +2,57 @@ package com.telegram.bot.chess.model.figure;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import com.telegram.bot.chess.model.Color;
 import com.telegram.bot.chess.model.Field;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+
+/* 
+ * Очень хотел вынести поля NUMBER_OF_FIGURE и ALL_DIRECTIONS как статические, но тогда нужно
+ * переопределять методы toNumber и makeMove (т.к. в них взаимодействуют данные поля)
+ * Пока не додумался, как сделать красиво. Оставлю так.
+ * 
+ * Пришла идея, похоже это решается с помощью enum
+*/
+
+@RequiredArgsConstructor
 public abstract class Figure { 
 
-    protected Color color;
-    protected int numberOfFigure;
-    private List<Integer[][]> ALL_DIRECTIONS;
+    @Getter
+    protected final Color color;
+    protected final int NUMBER_OF_FIGURE;
+    protected final List<List<List<Integer>>> ALL_DIRECTIONS;
 
-    public Color getColor() {
-        return color;
+
+    public Integer toNumber() {
+        return NUMBER_OF_FIGURE * color.getValue();
     }
 
-    public int toNumber() {
-        return numberOfFigure * color.getValue();
+    protected boolean isPositionInTheField(List<Integer> position) {
+        var x = position.get(0);
+        var y = position.get(1);
+
+        return (x >= 0 && x <= 7 && y >= 0 && y <= 7);
     }
 
-    protected boolean isPositionInTheField(Integer[] position) {
-        return position[0] >= 0 && position[0] <= 7
-            && position[1] >= 0 && position[1] <= 7;
+    protected List<List<Integer>> getListOfAllMovesInField(List<List<Integer>> direction, int x, int y) {
+        return direction.stream().map(i -> List.of(i.get(0) + x, i.get(1) + y))
+                                 .filter(this::isPositionInTheField)
+                                 .toList();
     }
 
-    //TODO: поменять названия
-    protected Integer[][] filterAllPositionsIsInField(Integer[][] direction, int x, int y) {
-        return Stream.of(direction).map(i -> new Integer[]{i[0] + x, i[1] + y})
-                                   .filter(i -> isPositionInTheField(i))
-                                   .toArray(Integer[][]::new);
+    protected List<List<Integer>> checkDirection(List<List<Integer>> direction, Field field, int x, int y) {
 
-    }
+        var listOfMovesInField = getListOfAllMovesInField(direction, x, y);
 
-    protected List<Integer[]> checkDirection(Integer[][] direction, Field field, int x, int y) {
+        var list = new ArrayList<List<Integer>>();
 
-        // add all pairs of coordinates from the direction array to the input coordinates
-        // and filter those coordinates that are in the field
-        Integer[][] newPositions = filterAllPositionsIsInField(direction, x, y);
-
-        var list = new ArrayList<Integer[]>();
-        for (var position : newPositions) {
-            Figure figure = field.getFigure( position[0]
-                                           , position[1]);
+        for (var position : listOfMovesInField) {
+            Figure figure = field.getFigure( position.get(0)
+                                           , position.get(1));
 
             if (figure == null) {
                 list.add(position);
@@ -58,16 +67,27 @@ public abstract class Figure {
         return list;
     }
 
-    public abstract List<Integer[]> getAllPossibleMoves(Field field, int x, int y);
+    public List<List<Integer>> getAllPossibleMoves(Field field, int x, int y) {
+        List<List<Integer>> possibleMoves = new ArrayList();
+
+        ALL_DIRECTIONS.forEach(
+            direction -> possibleMoves.addAll(checkDirection(direction, field, x, y)));
+
+        return possibleMoves;
+    }
 
     public boolean makeMove(Field field, int oldX, int oldY, int newX, int newY) {
-        for (var move : getAllPossibleMoves(field, oldX, oldY)) {
-            if (move[0] == newX && move[1] == newY) {
-                field.setFigure(null, oldX, oldY);
-                field.setFigure(this, newX, newY);
-                return true;
-            }
-        }
-        return false;
+
+        getAllPossibleMoves(field, oldX, oldY)
+                    .stream()
+                    .filter(i -> i.get(0) == newX && i.get(1) == newY)
+                    .findFirst()
+                    .ifPresentOrElse((move) -> {
+                        field.setFigure(null, oldX, oldY);
+                        field.setFigure(null, newX, newY);
+                    },
+                    () -> new IllegalArgumentException("Figure can't make this move"));
+
+        return true;
     }
 }
