@@ -3,28 +3,37 @@ package com.telegram.bot.chess.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jvnet.hk2.annotations.Service;
+import org.springframework.stereotype.Service;
 
 import com.telegram.bot.chess.model.Color;
+import com.telegram.bot.chess.model.Game;
 import com.telegram.bot.chess.storage.GameStorage;
 
+import lombok.NoArgsConstructor;
+
 @Service
+@NoArgsConstructor
 public class GameplayService {
 
-    public static void makeMove(String gameId, String playerLogin, int oldX, int oldY,
+    private boolean isYourMove(Game game, String playerLogin, Color colorOfFigure) {
+        var whoseMove     = game.getWhoseMove();
+
+        var isYourMove    = colorOfFigure == whoseMove;
+        var isYouMakeMove = colorOfFigure == Color.WHITE && playerLogin.equals(game.getWhitePlayer().getLogin())
+                         || colorOfFigure == Color.BLACK && playerLogin.equals(game.getBlackPlayer().getLogin());
+        
+        return isYourMove && isYouMakeMove;
+    }
+
+    public void makeMove(String gameId, String playerLogin, int oldX, int oldY,
                                                                    int newX, int newY) {
         var game   = GameStorage.INSTANCE.getGame(gameId);
         var figure = game.getFigure(oldX, oldY);
         var field  = game.getField();
 
         var colorOfFigure = figure.getColor();
-        var whoseMove     = game.getWhoseMove();
 
-        var isYourMove    = colorOfFigure == whoseMove;
-        var isYouMakeMove = colorOfFigure == Color.WHITE && playerLogin.equals(game.getWhitePlayer().getLogin())
-                         || colorOfFigure == Color.BLACK && playerLogin.equals(game.getBlackPlayer().getLogin());
-
-        if (isYourMove && isYouMakeMove) {
+        if (isYourMove(game, playerLogin, colorOfFigure)) {
             if (figure.makeMove(field, oldX, oldY, newX, newY)) {
                 game.changeWhoMove();
                 GameStorage.INSTANCE.setGame(game);
@@ -32,7 +41,7 @@ public class GameplayService {
         }
     }
 
-    public static List<List<Integer>> getPossibleMoves(String playerLogin, String gameId, int x, int y) {
+    public List<List<Integer>> getPossibleMoves(String playerLogin, String gameId, int x, int y) {
         var game   = GameStorage.INSTANCE.getGame(gameId);
         var field  = game.getField();
         var figure = field.getFigure(x, y);

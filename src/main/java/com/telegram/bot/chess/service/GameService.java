@@ -53,10 +53,4 @@ public class GameService {
         setPlayerColorOf(player, Color.BLACK, game);
     }
 
-    public void changeWhoMove() {
-        whoseMove = switch(whoseMove) {
-            case WHITE -> Color.BLACK;
-            case BLACK -> Color.WHITE;
-        };
-    }
 }

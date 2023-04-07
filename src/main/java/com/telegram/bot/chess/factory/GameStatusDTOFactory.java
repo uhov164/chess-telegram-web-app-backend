@@ -17,7 +17,7 @@ public class GameStatusDTOFactory {
     private List<List<Integer>> allFiguresToNumber(List<List<Figure>> field) {
         return field.stream()
                     .map(row -> row.stream()
-                                   .map(Figure::toNumber)
+                                   .map(figure -> figure != null ? figure.toNumber() : 0)
                                    .toList())
                     .collect(Collectors.toList());
     }

@@ -1,15 +1,12 @@
 package com.telegram.bot.chess.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public enum Color {
     BLACK(-1), WHITE(1);
 
-    private int color;
-
-    Color(int color) {
-        this.color = color;
-    }
-
-    public int getValue() {
-        return color;
-    }
+    @Getter
+    private int value;
 }

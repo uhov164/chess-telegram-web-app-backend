@@ -1,6 +1,5 @@
 package com.telegram.bot.chess.model;
 
-import java.util.List;
 import java.util.UUID;
 
 import com.telegram.bot.chess.factory.FieldFactory;

@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class Player {
     private String login;
-    private Color color;
+    private Color  color;
 }

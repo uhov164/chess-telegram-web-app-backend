@@ -16,7 +16,7 @@ public class ChessApplication {
 		SpringApplication.run(ChessApplication.class, args);
 
 		var game = new Game();
-		var id = game.getGameId();
+		game.setGameId("test");
 		
 		Player p1 = new Player("p1", Color.WHITE);
 		Player p2 = new Player("p2", Color.BLACK);

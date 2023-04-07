@@ -1,8 +1,6 @@
 package com.telegram.bot.chess.model.figure.patternMoves;
 
 import java.util.List;
-import java.util.stream.IntStream;
-
 
 public final class SquareMoves {
 

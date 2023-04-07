@@ -1,6 +1,7 @@
 package com.telegram.bot.chess.factory;
 
 import java.util.ArrayList;
+import java.util.stream.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -47,13 +48,24 @@ public class FieldFactory {
         field.get(firstRow).set(4, new Queen(color));
 
 
-        Collections.fill(field.get(firstRow), new Pawn(color));
+        Collections.fill(field.get(firstRow + color.getValue()), new Pawn(color));
     }
 
     public static Field createField() {
-        var field = new ArrayList<List<Figure>>();
+
+        List<List<Figure>> field = Stream.generate(
+                        () -> Stream.generate(() -> (Figure) null).limit(8).collect(Collectors.toList()))
+                        .limit(8).collect(Collectors.toList());
+
+        // field.forEach(list -> list.addAll(Collections.nCopies(8, null)));
+
+        System.out.println(field.size());
+        System.out.println(field.get(0).size());
+
         createRowsOfFiguresColorOf(Color.WHITE, field);
         createRowsOfFiguresColorOf(Color.BLACK, field);
+
+        System.out.println(field);
 
         return new Field(field);
     }
