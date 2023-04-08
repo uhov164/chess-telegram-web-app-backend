@@ -57,8 +57,6 @@ public class FieldFactory {
                         () -> Stream.generate(() -> (Figure) null).limit(8).collect(Collectors.toList()))
                         .limit(8).collect(Collectors.toList());
 
-        // field.forEach(list -> list.addAll(Collections.nCopies(8, null)));
-
         System.out.println(field.size());
         System.out.println(field.get(0).size());
 
