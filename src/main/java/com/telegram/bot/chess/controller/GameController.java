@@ -2,7 +2,6 @@ package com.telegram.bot.chess.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,17 +33,25 @@ public class GameController {
     private static final String MAKE_MOVE          = "/api/game/makeMove";
 
     //GET не может иметь body, посмотреть как правильно сделать
+    // -> сделать через RequesetParam
     @PostMapping(GET_GAME_STATUS)
     public ResponseEntity<GameStatusDTO> getGameStatus(@RequestBody GameStatusRequestDTO request) {
         var gameID   = request.getGameId();
         var game     = GameStorage.INSTANCE.getGame(gameID);
+
+        System.out.println("GET_GAME_STATUS:");
+        System.out.println(gameID + " " + request.getPlayerId());
+
         var response = gameStatusDTOFactory.createGameStatusDTO(game, request.getPlayerId());
 
         return ResponseEntity.ok(response);
     }
 
+
     @PostMapping(GET_POSSIBLE_MOVES)
     public ResponseEntity<List<List<Integer>>> getPossibleMoves(@RequestBody PossibleMovesRequestDTO request) {
+
+        System.out.println(request);
 
         var playerLogin = request.getPlayerLogin();
         var gameId      = request.getGameId();

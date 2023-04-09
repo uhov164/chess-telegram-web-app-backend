@@ -19,8 +19,8 @@ public class GameplayService {
         var whoseMove     = game.getWhoseMove();
 
         var isYourMove    = colorOfFigure == whoseMove;
-        var isYouMakeMove = colorOfFigure == Color.WHITE && playerLogin.equals(game.getWhitePlayer().getLogin())
-                         || colorOfFigure == Color.BLACK && playerLogin.equals(game.getBlackPlayer().getLogin());
+        var isYouMakeMove = colorOfFigure == Color.WHITE && playerLogin.equals(game.getWhitePlayer().getPlayerId())
+                         || colorOfFigure == Color.BLACK && playerLogin.equals(game.getBlackPlayer().getPlayerId());
         
         return isYourMove && isYouMakeMove;
     }
@@ -50,8 +50,8 @@ public class GameplayService {
         var whoseMove     = game.getWhoseMove();
 
         var isYourMove    = colorOfFigure == whoseMove;
-        var isYouMakeMove = colorOfFigure == Color.WHITE && playerLogin.equals(game.getWhitePlayer().getLogin())
-                         || colorOfFigure == Color.BLACK && playerLogin.equals(game.getBlackPlayer().getLogin());
+        var isYouMakeMove = colorOfFigure == Color.WHITE && playerLogin.equals(game.getWhitePlayer().getPlayerId())
+                         || colorOfFigure == Color.BLACK && playerLogin.equals(game.getBlackPlayer().getPlayerId());
         
         List<List<Integer>> listOfPossibleMoves = new ArrayList<List<Integer>>();
         if (isYouMakeMove && isYourMove) {

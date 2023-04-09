@@ -1,13 +1,16 @@
 package com.telegram.bot.chess.model;
 
-import java.util.UUID;
-
-import com.telegram.bot.chess.factory.FieldFactory;
 import com.telegram.bot.chess.model.figure.Figure;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Game {
     private String gameId; 
 
@@ -20,15 +23,6 @@ public class Game {
     private boolean isLeftRookMoved;
     private boolean isRightRookMoved;
     private boolean isKingMoved;
-
-    public Game() {
-        isRightRookMoved = false;
-        isLeftRookMoved  = false;
-        isKingMoved      = false;
-        whoseMove        = Color.WHITE;
-        gameId           = UUID.randomUUID().toString();
-        field            = FieldFactory.createField();
-    }
 
     public Figure getFigure(int x, int y) {
         return field.getFigure(x, y);

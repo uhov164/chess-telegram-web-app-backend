@@ -3,16 +3,22 @@ package com.telegram.bot.chess.service;
 import org.springframework.stereotype.Service;
 
 import com.telegram.bot.chess.dto.request.ConnectRequestDTO;
+import com.telegram.bot.chess.factory.GameFactory;
 import com.telegram.bot.chess.model.Color;
 import com.telegram.bot.chess.model.Game;
 import com.telegram.bot.chess.model.Player;
 import com.telegram.bot.chess.storage.GameStorage;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class GameService {
 
+    private final GameFactory gameFactory;
+
     public Game createGame() {
-        var game = new Game();
+        var game = gameFactory.createGame();
         GameStorage.INSTANCE.setGame(game);
         return game;
     }
@@ -23,10 +29,10 @@ public class GameService {
             throw new IllegalArgumentException("Game is full");
         }
 
-        if (color == Color.WHITE && game.getWhitePlayer().getLogin().equals(player.getLogin())) {
+        if (color == Color.WHITE && game.getWhitePlayer().getPlayerId().equals(player.getPlayerId())) {
             game.setWhitePlayer(player);
         }
-        else if (color == Color.BLACK && game.getBlackPlayer().getLogin().equals(player.getLogin())) {
+        else if (color == Color.BLACK && game.getBlackPlayer().getPlayerId().equals(player.getPlayerId())) {
             game.setBlackPlayer(player);
         }
 

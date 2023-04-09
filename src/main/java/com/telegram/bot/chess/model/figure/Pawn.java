@@ -28,7 +28,7 @@ public class Pawn extends Figure {
         if (!doubleCellMove) {
             if ((field.getFigure(currentX - color.getValue(), currentY) == null) && (field.getFigure(currentX - 2 * color.getValue(), currentY) == null)) {
                 allPossibleMoves.add(List.of(currentX - color.getValue(), currentY));
-                allPossibleMoves.add(List.of(currentX - 3 * color.getValue(), currentY));
+                allPossibleMoves.add(List.of(currentX - 2 * color.getValue(), currentY));
             }
         }
 

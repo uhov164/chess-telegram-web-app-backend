@@ -2,6 +2,7 @@ package com.telegram.bot.chess.model.figure;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.telegram.bot.chess.model.Color;
 import com.telegram.bot.chess.model.Field;
@@ -78,16 +79,17 @@ public abstract class Figure {
 
     public boolean makeMove(Field field, int oldX, int oldY, int newX, int newY) {
 
-        getAllPossibleMoves(field, oldX, oldY)
+        Optional<List<Integer>> opt = getAllPossibleMoves(field, oldX, oldY)
                     .stream()
                     .filter(i -> i.get(0) == newX && i.get(1) == newY)
-                    .findFirst()
-                    .ifPresentOrElse((move) -> {
-                        field.setFigure(null, oldX, oldY);
-                        field.setFigure(null, newX, newY);
-                    },
-                    () -> new IllegalArgumentException("Figure can't make this move"));
+                    .findFirst();
 
-        return true;
+        if (opt.isPresent()) {
+            field.setFigure(null, oldX, oldY);
+            field.setFigure(this, newX, newY);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

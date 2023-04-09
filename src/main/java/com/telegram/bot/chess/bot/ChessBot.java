@@ -23,7 +23,7 @@ import com.telegram.bot.chess.service.GameService;
 import lombok.Getter;
 
 @Getter
-@Component
+// @Component
 public class ChessBot extends TelegramLongPollingBot {
 
     @Autowired
