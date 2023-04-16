@@ -9,17 +9,4 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class ChessApplicationTests {
 
-	Game game;
-
-	@BeforeAll
-	void createGame() {
-		// game = new Game();
-	}
-
-	@Test
-	void testGame() {
-
-
-
-	}
 }
